@@ -1,12 +1,20 @@
-image:os_file
-	dd if=../build/boot.bin of=../build/virtual_disk.img bs=512 count=1 conv=notrunc
+DISK = ../build/virtual_disk.img
 
-os_file:./boot/boot.S
+image:os_file
+	dd if=../build/boot.bin of=$(DISK) bs=512 count=1 conv=notrunc
+	dd if=../build/loader.bin of=$(DISK) bs=512 count=4 seek=2 conv=notrunc
+
+os_file:./boot/boot.S ./boot/loader.S
 	nasm -f bin -o ../build/boot.bin ./boot/boot.S
+	nasm -f bin -o ../build/loader.bin ./boot/loader.S
 
 .PHONY:qemu
 qemu: ../build/virtual_disk.img
 	qemu-system-i386 \
 	-m 32M \
 	-boot c \
-	-hda ../build/virtual_disk.img
+	-hda $(DISK)
+
+.PHONY:clean
+clean:
+	rm -rf ../build/boot/*

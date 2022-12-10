@@ -1,0 +1,8 @@
+[ORG 0x900]
+mov ax,0xb800
+mov gs,ax
+
+mov byte [gs:0x02],'l'
+mov byte [gs:0x03],0x70
+
+jmp $
