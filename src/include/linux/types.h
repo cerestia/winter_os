@@ -5,7 +5,7 @@
 #define WINTER_TYPES_H
 
 #define EOF -1
-#define null ((void *)0)
+#define NULL ((void *)0)
 #define EOS '\0'
 
 #define bool _Bool

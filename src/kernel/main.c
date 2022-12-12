@@ -1,9 +1,9 @@
-
+#include "../include/string.h"
 
 void kernel_main()
 {
-    char *first_char = 0xb8000;
-    *first_char = 'm';
-    first_char++;
-    *first_char = 0x70;
+    char test[] = "test memcpy";
+    char src[16];
+    strcpy(&src, test);
+    return;
 }

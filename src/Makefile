@@ -24,6 +24,17 @@ $(BUILD)/boot/%.bin: ./boot/%.S
 	$(shell mkdir -p ${BUILD}/boot)
 	nasm -f bin -o $@ $<
 
+$(BUILD)/system.bin:$(BUILD)/kernel.bin
+	objcopy -O binary $< $@
+	nm ${BUILD}/kernel.bin | sort > ${BUILD}/system.map
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
+					$(BUILD)/kernel/main.o 	\
+					$(BUILD)/lib/string.o 
+
+	$(shell mkdir -p $(dir $@))
+	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNELENTRY)
+
 $(BUILD)/kernel/%.o: ./kernel/%.S
 	$(shell mkdir -p $(BUILD)/kernel)
 	nasm -f elf32 $< -o $@
@@ -32,14 +43,9 @@ $(BUILD)/kernel/%.o: ./kernel/%.c
 	$(shell mkdir -p ${BUILD}/kernel)
 	gcc ${CFLAGS} ${DEBUG} -c $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
-					$(BUILD)/kernel/main.o
-	$(shell mkdir -p $(dir $@))
-	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNELENTRY)
-
-$(BUILD)/system.bin:$(BUILD)/kernel.bin
-	objcopy -O binary $< $@
-	nm ${BUILD}/kernel.bin | sort > ${BUILD}/system.map
+${BUILD}/lib/%.o: ./lib/%.c
+	$(shell mkdir -p ${BUILD}/lib)
+	gcc ${CFLAGS} ${DEBUG} -c $< -o $@
 
 .PHONY:qemu
 qemu: ../build/virtual_disk.img
@@ -53,7 +59,7 @@ qemug: ../build/virtual_disk.img
 	qemu-system-i386 \
 	-m 32M \
 	-boot c \
-	-hda $(DISK)
+	-hda $(DISK) \
 	-s -S
 
 .PHONY:clean

@@ -4,6 +4,7 @@
 #include "types.h"
 
 void console_init();
+void console_clean();
 void console_write(char *buf, u32 count);
 
 #endif
