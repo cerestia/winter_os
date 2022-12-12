@@ -28,7 +28,12 @@ $(BUILD)/kernel/%.o: ./kernel/%.S
 	$(shell mkdir -p $(BUILD)/kernel)
 	nasm -f elf32 $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o 
+$(BUILD)/kernel/%.o: ./kernel/%.c
+	$(shell mkdir -p ${BUILD}/kernel)
+	gcc ${CFLAGS} ${DEBUG} -c $< -o $@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
+					$(BUILD)/kernel/main.o
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNELENTRY)
 

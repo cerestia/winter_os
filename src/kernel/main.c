@@ -1,5 +1,9 @@
-void kernal_main()
+
+
+void kernel_main()
 {
-    while (1)
-        ;
+    char *first_char = 0xb8000;
+    *first_char = 'm';
+    first_char++;
+    *first_char = 0x70;
 }
