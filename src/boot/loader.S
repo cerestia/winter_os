@@ -24,7 +24,7 @@ prepare_protected:
     jmp code_selector:protected
 
 [section .gdt]:
-KERNEL_ADDR equ 0x1200
+KERNEL_ADDR equ 0x70000
 
 code_selector equ (1<<3)
 data_selector equ (2<<3)
@@ -56,6 +56,8 @@ data_descriptor:
 gdt_ptr:
     dw ($-gdt_base)
     dd gdt_base
+;---------------------------------------------------------------------
+;protected mode
 [bits 32]
 protected:
  mov ax, data_selector
@@ -66,18 +68,18 @@ protected:
     mov gs, ax
 
     xchg bx,bx
-    mov esp, 0x9fbff
+    mov esp, 0x9f000
 
-    ; 将内核读入内存
+    ; 将内核代码读入内存
     mov edi, KERNEL_ADDR
-    mov ecx, 3
+    mov ecx, 10
     mov bl, 60
-    ;call read_hd
+    call read_hd
 
     mov byte [0xb8000],'P'
     mov byte [0xb8001],0x70
-    jmp $
-    ;jmp CODE_SELECTOR:KERNEL_ADDR
+   
+    jmp code_selector:KERNEL_ADDR
 
 read_hd:
     ; 0x1f2 8bit 指定读取或写入的扇区数
