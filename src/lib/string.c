@@ -1,5 +1,5 @@
 
-#include "../include/string.h"
+#include "winter/string.h"
 
 char *strcpy(char *dest, const char *src)
 {

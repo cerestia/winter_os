@@ -35,7 +35,8 @@ $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
 					$(BUILD)/kernel/asm/io.o \
 					$(BUILD)/kernel/chr_drv/console.o \
 					$(BUILD)/kernel/printk.o \
-					$(BUILD)/kernel/vsprintf.o
+					$(BUILD)/kernel/vsprintf.o \
+					$(BUILD)/kernel/assert.o
 
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNELENTRY)
