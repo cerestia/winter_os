@@ -1,4 +1,4 @@
-#include "console.h"
+#include "linux/console.h"
 #include "asm/io.h"
 #include "string.h"
 

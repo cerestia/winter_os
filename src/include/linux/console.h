@@ -1,7 +1,7 @@
 #ifndef WINTER_CONSOLE_H
 #define WINTER_CONSOLE_H
 
-#include "linux/types.h"
+#include "types.h"
 
 void console_init();
 void console_clear();
