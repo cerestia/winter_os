@@ -12,6 +12,7 @@ CFLAGS+= -fno-stack-protector	# 不需要栈保护
 CFLAGS:=$(strip ${CFLAGS})
 
 DEBUG:= -g
+INCLUDE = -I./include
 
 DISK = ../build/virtual_disk.img
 
@@ -30,22 +31,24 @@ $(BUILD)/system.bin:$(BUILD)/kernel.bin
 
 $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
 					$(BUILD)/kernel/main.o 	\
-					$(BUILD)/lib/string.o 
+					$(BUILD)/lib/string.o \
+					$(BUILD)/kernel/asm/io.o \
+					$(BUILD)/kernel/chr_drv/console.o 
 
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNELENTRY)
 
 $(BUILD)/kernel/%.o: ./kernel/%.S
-	$(shell mkdir -p $(BUILD)/kernel)
+	$(shell mkdir -p $(dir @))
 	nasm -f elf32 $< -o $@
 
 $(BUILD)/kernel/%.o: ./kernel/%.c
-	$(shell mkdir -p ${BUILD}/kernel)
-	gcc ${CFLAGS} ${DEBUG} -c $< -o $@
+	$(shell mkdir -p $(dir @))
+	gcc ${CFLAGS} ${INCLUDE} ${DEBUG} -c $< -o $@
 
 ${BUILD}/lib/%.o: ./lib/%.c
-	$(shell mkdir -p ${BUILD}/lib)
-	gcc ${CFLAGS} ${DEBUG} -c $< -o $@
+	$(shell mkdir -p $(dir @))
+	gcc ${CFLAGS} $(INCLUDE) ${DEBUG} -c $< -o $@
 
 .PHONY:qemu
 qemu: ../build/virtual_disk.img

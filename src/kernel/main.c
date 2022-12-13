@@ -1,9 +1,7 @@
-#include "../include/string.h"
+#include "string.h"
+#include "console.h"
 
 void kernel_main()
 {
-    char test[] = "test memcpy";
-    char src[16];
-    strcpy(&src, test);
-    return;
+    console_init();
 }
