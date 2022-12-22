@@ -41,25 +41,24 @@ static u16 erase = 0x0720; // 空格
 // 获得当前显示器的开始位置
 static void get_screen()
 {
-    out_byte(CRT_ADDR_REG, CRT_START_ADDR_H); // 开始位置高地址
-    screen = in_byte(CRT_DATA_REG) << 8;      // 开始位置高八位
+    out_byte(CRT_ADDR_REG, CRT_CURSOR_H);
+    screen = in_byte(CRT_DATA_REG) << 8;
     out_byte(CRT_ADDR_REG, CRT_START_ADDR_L);
     screen |= in_byte(CRT_DATA_REG);
 
-    screen <<= 1; // screen *= 2
+    screen <<= 1;
     screen += MEM_BASE;
 }
 
-// 设置当前显示器开始的位置
+// 设置显示器开始位置
 static void set_screen()
 {
-    out_byte(CRT_ADDR_REG, CRT_START_ADDR_H); // 开始位置高地址
+    out_byte(CRT_ADDR_REG, CRT_START_ADDR_H);
     out_byte(CRT_DATA_REG, ((screen - MEM_BASE) >> 9) & 0xff);
     out_byte(CRT_ADDR_REG, CRT_START_ADDR_L);
     out_byte(CRT_DATA_REG, ((screen - MEM_BASE) >> 1) & 0xff);
 }
 
-// 获得当前光标位置
 static void get_cursor()
 {
     out_byte(CRT_ADDR_REG, CRT_CURSOR_H); // 高地址
@@ -103,22 +102,19 @@ void console_clear()
 // 向上滚屏
 static void scroll_up()
 {
-    if (screen + SCR_SIZE + ROW_SIZE < MEM_END)
-    {
-        u32 *ptr = (u32 *)(screen + SCR_SIZE);
-        for (size_t i = 0; i < WIDTH; i++)
-        {
-            *ptr++ = erase;
-        }
-        screen += ROW_SIZE;
-        pos += ROW_SIZE;
-    }
-    else
+    if (screen + SCR_SIZE + ROW_SIZE >= MEM_END)
     {
         memcpy((void *)MEM_BASE, (void *)screen, SCR_SIZE);
         pos -= (screen - MEM_BASE);
         screen = MEM_BASE;
     }
+    u32 *ptr = (u32 *)(screen + SCR_SIZE);
+    for (size_t i = 0; i < WIDTH; i++)
+    {
+        *ptr++ = erase;
+    }
+    screen += ROW_SIZE;
+    pos += ROW_SIZE;
     set_screen();
 }
 

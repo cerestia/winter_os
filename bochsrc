@@ -3,8 +3,6 @@ plugin_ctrl: unmapped=true, biosdev=true, speaker=true, extfpuirq=true, parallel
 config_interface: textconfig
 #需要添加gui_debug
 display_library: x,options="gui_debug"
-
-#允许魔数断点
 magic_break: enabled=1
 
 memory: host=32, guest=32

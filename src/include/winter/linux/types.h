@@ -12,6 +12,8 @@
 #define true 1
 #define false 0
 
+#define _packed __attribute__((packed))
+
 typedef unsigned int size_t;
 typedef long long int64;
 typedef unsigned int uint;
